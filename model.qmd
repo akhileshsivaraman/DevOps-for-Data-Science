@@ -42,7 +42,7 @@ print(f"Coefficients {model.coef_}")
 
 ## Save the model so it can be placed outside the bundle
 ```{python}
-# take processing/business logic out of the presentation layer
+# take processing function/business logic out of the presentation layer
 
 # create VetiverModel class object
 from vetiver import VetiverModel
