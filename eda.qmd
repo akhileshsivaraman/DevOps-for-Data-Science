@@ -12,18 +12,22 @@ library(palmerpenguins)
 library(dplyr)
 library(ggplot2)
 
-df <- palmerpenguins::penguins
+
+# df <- palmerpenguins::penguins - instead of loading the data from the palmer penguins library, we can store the data in a database (creating DuckDB db.R) and load it from there
+con <- DBI::dbConnect(
+  duckdb::duckdb(),
+  dbdir = "my-db.duckdb"
+) # a command to close the connection is required at the end of the script
+df <- dplyr::tbl(con, "penguins")
 ```
 
 ```{r}
 df %>%
   group_by(species, sex) %>%
   summarise(
-    across(
-      where(is.numeric), 
-      \(x) mean(x, na.rm = TRUE)
-      )
+    across(ends_with("mm") | ends_with("g"), ~ mean(.x, na.rm = TRUE))
     ) %>%
+  collect() %>% # added when using a database - indicates that the work is pushed to the database
   knitr::kable()
 ```
 
@@ -35,3 +39,10 @@ df %>%
   geom_point() + 
   geom_smooth(method = "lm")
 ```
+
+
+
+```{r}
+con.close()
+```
+
