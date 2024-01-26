@@ -38,3 +38,37 @@ print(f"Intercept {model.intercept_}")
 print(f"Columns {X.columns}")
 print(f"Coefficients {model.coef_}")
 ```
+
+
+## Save the model so it can be placed outside the bundle
+```{python}
+# take processing/business logic out of the presentation layer
+
+# create VetiverModel class object
+from vetiver import VetiverModel
+v = VetiverModel(model, model_name = "penguin_model", prototype_data = X)
+# model = a trained model
+# model_name = a name you want to assign to the model
+# prototype_data = a sample of the data
+
+
+# save model
+from pins import board_folder
+from vetiver import vetiver_pin_write
+model_board = board_folder("data/model/", allow_pickle_read = True) # use a local folder as a board
+vetiver_pin_write(model_board, v) # write the model into a board
+```
+
+## Create an API for model predictions
+```{python}
+# open model if needed
+# b = board_folder("data/model", allow_pickle_read = True)
+# v = VetiverModel.from_pin(b, "penguin_model")
+
+# auto-generate a fastAPI from the model
+from vetiver import VetiverAPI
+app = VetiverAPI(v, check_prototype = True)
+
+# run app
+app.run(port = 8080) # view API with http://localhost:8080
+```
