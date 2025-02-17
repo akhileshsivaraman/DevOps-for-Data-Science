@@ -43,6 +43,6 @@ df %>%
 
 
 ```{r}
-con.close()
+DBI::dbDisconnect(con)
 ```
 
