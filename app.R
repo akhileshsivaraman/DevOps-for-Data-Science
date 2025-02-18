@@ -63,7 +63,7 @@ server <- function(input, output) {
   pred <- eventReactive(
     input$predict, {
       
-      log4r::info(log, "Prediction requested")
+      log4r::info(log, paste("Prediction requested with parameters: ", jsonlite::toJSON(vals())))
       
       pred_resp <- httr2::request(api_url) |>
         httr2::req_body_json(list(vals())) |>
