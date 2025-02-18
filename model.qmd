@@ -24,7 +24,7 @@ con = duckdb.connect("my-db.duckdb")
 df = con.execute("SELECT * FROM penguins").fetchdf().dropna()
 con.close()
 
-df.head(3)
+# df.head(3)
 ```
 
 ## Define Model and Fit
@@ -76,6 +76,6 @@ from vetiver import VetiverAPI
 app = VetiverAPI(v, check_prototype = True)
 
 # run app
-app.run(port = 8080) # view API with http://localhost:8080
+app.run(port = 8080, host = "127.0.0.1") # view API with http://localhost:8080
 
 ```
