@@ -43,6 +43,11 @@ ui <- fluidPage(
 )
 
 server <- function(input, output) {
+  # initialise logging session
+  log <- log4r::logger()
+  log4r::info(log, "App started")
+  
+  
   # Input params
   vals <- reactive(
     list(
@@ -53,13 +58,26 @@ server <- function(input, output) {
     )
   )
   
+  
   # Fetch prediction from API
   pred <- eventReactive(
-    input$predict,
-    httr2::request(api_url) |>
-      httr2::req_body_json(list(vals())) |>
-      httr2::req_perform() |>
-      httr2::resp_body_json(),
+    input$predict, {
+      
+      log4r::info(log, "Prediction requested")
+      
+      pred_resp <- httr2::request(api_url) |>
+        httr2::req_body_json(list(vals())) |>
+        httr2::req_perform()
+      
+      log4r::info(log, "Prediction returned")
+      
+      if(httr2::resp_is_error(pred_resp)){
+        log4r::error(log, paste("HTTP error"))
+      }
+      
+      pred <- httr2::resp_body_json(pred_resp)
+      return(pred)
+    },
     ignoreInit = TRUE
   )
   
